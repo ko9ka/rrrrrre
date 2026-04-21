@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: Arial;
+      background: linear-gradient(135deg, #ffd1dc, #ffb6c1, #ffc0cb);
+    }
+
+    .card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      text-align: center;
+      width: 340px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 12px;
+      background: #4285F4;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .user {
+      margin-top: 15px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="card">
+  <h1>💗 Вход через Google</h1>
+
+  <button onclick="login()">
+    Войти
+  </button>
+
+  <div class="user" id="user"></div>
+</div>
+
+<script>
+const supabase = window.supabase.createClient(
+  "https://zwaslniacbzbcvzashvd.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp3YXNsbmlhY2J6YmN2emFzaHZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NTQ4MDQsImV4cCI6MjA5MjMzMDgwNH0.x_g7pIMbELMyefexWrtLVcw7_KDHIxH953K4J1gwIsY"
+);
+
+// 🔐 login через Google
+async function login() {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google'
+  });
+
+  if (error) {
+    alert(error.message);
+  }
+}
+
+// 👤 показать пользователя
+async function checkUser() {
+  const { data } = await supabase.auth.getUser();
+
+  if (data?.user) {
+    document.getElementById("user").innerHTML =
+      "👤 " + data.user.email;
+  }
+}
+
+checkUser();
+
+// 🔄 обновление после входа
+supabase.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    document.getElementById("user").innerHTML =
+      "👤 " + session.user.email;
+  }
+});
+</script>
+
+</body>
+</html>
